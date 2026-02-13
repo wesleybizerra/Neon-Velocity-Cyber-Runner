@@ -1,0 +1,56 @@
+generator client {
+provider = "prisma-client-js"
+}
+datasource db {
+provider = "postgresql"
+url      = env("DATABASE_URL")
+}
+model User {
+id            String    @id @default(cuid())
+name          String?
+email         String    @unique
+password      String?
+profile       Profile?
+purchases     Purchase[]
+createdAt     DateTime  @default(now())
+updatedAt     DateTime  @updatedAt
+}
+model Profile {
+id           String   @id @default(cuid())
+userId       String   @unique
+user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+avatar       String?
+coins        Int      @default(0)
+gems         Int      @default(0)
+xp           Int      @default(0)
+level        Int      @default(1)
+streak       Int      @default(1)
+lastLogin    DateTime @default(now())
+referralCode String   @unique
+benefits     Json     @default("[]")
+}
+model StoreItem {
+id           String     @id
+name         String
+priceCents   Int
+benefits     Json
+active       Boolean    @default(true)
+purchases    Purchase[]
+}
+model Purchase {
+id          String    @id @default(cuid())
+userId      String
+user        User      @relation(fields: [userId], references: [id])
+itemId      String
+storeItem   StoreItem @relation(fields: [itemId], references: [id])
+mpPaymentId String    @unique
+status      String
+amount      Float
+createdAt   DateTime  @default(now())
+}
+model Referral {
+id             String   @id @default(cuid())
+referrerId     String
+referredUserId String   @unique
+createdAt      DateTime @default(now())
+}

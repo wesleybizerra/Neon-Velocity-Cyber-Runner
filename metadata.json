@@ -1,0 +1,6 @@
+
+{
+  "name": "Neon Velocity: Cyber Runner",
+  "description": "Um jogo de arcade rítmico e frenético ambientado em um futuro cyberpunk. Corra, desvie e evolua seu corredor enquanto compete pelo topo do ranking global. Inclui sistema de fidelidade, missões diárias, loja premium com Mercado Pago e sistema de indicações viral.",
+  "requestFramePermissions": ["camera", "microphone"]
+}
