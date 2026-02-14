@@ -1,27 +1,43 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]'; // Agora vai funcionar
+import { prisma } from '../../../src/lib/prisma';
 
-import { getSession } from 'next-auth/react';
-import { PrismaClient } from '@prisma/client';
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    // 1. Verifica quem está logado
+    const session = await getServerSession(req, res, authOptions);
 
-const prisma = new PrismaClient();
-
-export default async function handler(req: any, res: any) {
-    const session = await getSession({ req });
-    if (!session?.user) return res.status(401).json({ error: "Unauthorized" });
+    if (!session || !session.user?.email) {
+        return res.status(401).json({ message: 'Não autenticado' });
+    }
 
     try {
-        const profile = await prisma.profile.findUnique({ where: { userId: (session.user as any).id } });
-        if (!profile) {
-            const newProfile = await prisma.profile.create({
-                data: {
-                    userId: (session.user as any).id,
-                    referralCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
-                    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.email}`
-                }
-            });
-            return res.status(200).json({ ...session.user, ...newProfile });
+        // 2. Busca os dados ATUALIZADOS no banco
+        const user = await prisma.user.findUnique({
+            where: { email: session.user.email },
+            include: {
+                profile: true, // Inclui perfil se tiver
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
         }
-        return res.status(200).json({ ...session.user, ...profile });
+
+        // 3. Retorna os dados para o Frontend
+        return res.status(200).json({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            avatar: user.image,
+            coins: user.coins, // O saldo atualizado vem daqui
+            gems: user.gems,
+            highScore: user.highScore,
+            level: 1, // Lógica simples de nível
+            streak: user.matchesPlayed
+        });
     } catch (error) {
-        return res.status(500).json({ error: "Internal Server Error" });
+        console.error(error);
+        return res.status(500).json({ message: 'Erro ao buscar perfil' });
     }
 }
