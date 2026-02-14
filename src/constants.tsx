@@ -1,4 +1,3 @@
-
 import { StoreItem } from './types';
 
 export const STORE_ITEMS: StoreItem[] = [
@@ -36,6 +35,7 @@ export const DAILY_MISSIONS = [
   { id: 2, text: 'Sobreviva 120 segundos', reward: 150, goal: 120 },
   { id: 3, text: 'Atinja o Nível 5 hoje', reward: 200, goal: 5 }
 ];
+
 export const REAL_MONEY_ITEMS = [
   {
     id: 'pack_iniciante',
@@ -64,7 +64,7 @@ export const REAL_MONEY_ITEMS = [
   {
     id: 'pack_profissional',
     name: 'PACK PROFISSIONAL',
-    description: 'Excelente custo benefício para evoluir rápido.',
+    description: 'Para quem leva a corrida a sério.',
     price: 15.00, // Reais
     benefits: {
       gems: 300,
@@ -76,7 +76,7 @@ export const REAL_MONEY_ITEMS = [
   {
     id: 'pack_superior',
     name: 'PACK SUPERIOR',
-    description: 'Excelente custo benefício para evoluir rápido.',
+    description: 'Domine o ranking com facilidade.',
     price: 20.00, // Reais
     benefits: {
       gems: 400,
@@ -86,9 +86,9 @@ export const REAL_MONEY_ITEMS = [
     icon: '🔥'
   },
   {
-    id: 'pack_superior',
-    name: 'PACK SUPERIOR',
-    description: 'Excelente custo benefício para evoluir rápido.',
+    id: 'pack_ultra', // Mudei o ID para não dar conflito
+    name: 'PACK ULTRA', // Mudei o nome para diferenciar
+    description: 'Velocidade máxima e recursos abundantes.',
     price: 25.00, // Reais
     benefits: {
       gems: 500,
@@ -97,15 +97,16 @@ export const REAL_MONEY_ITEMS = [
     },
     icon: '⏩'
   },
-  id: 'pack_legend',
-  name: 'PACK LENDA CYBER',
-  description: 'O pacote supremo. Poder total.',
-  price: 30.00, // Reais
-  benefits: {
-    gems: 700,
-    coins: 7000,
-    bonus: 'ACESSO VIP + Dobro de Score (Permanente)'
-  },
-  icon: '👑'
+  { // AQUI ESTAVA FALTANDO ESTA CHAVE
+    id: 'pack_legend',
+    name: 'PACK LENDA CYBER',
+    description: 'O pacote supremo. Poder total.',
+    price: 30.00, // Reais
+    benefits: {
+      gems: 700,
+      coins: 7000,
+      bonus: 'ACESSO VIP + Dobro de Score (Permanente)'
+    },
+    icon: '👑'
   }
 ];
