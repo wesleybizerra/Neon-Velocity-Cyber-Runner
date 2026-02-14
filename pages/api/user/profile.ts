@@ -4,21 +4,13 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Use any for req and res to avoid missing type exports from 'next' in this environment
 export default async function handler(req: any, res: any) {
     const session = await getSession({ req });
-
-    if (!session?.user) {
-        return res.status(401).json({ error: "Unauthorized" });
-    }
+    if (!session?.user) return res.status(401).json({ error: "Unauthorized" });
 
     try {
-        const profile = await prisma.profile.findUnique({
-            where: { userId: (session.user as any).id },
-        });
-
+        const profile = await prisma.profile.findUnique({ where: { userId: (session.user as any).id } });
         if (!profile) {
-            // Cria perfil básico caso ainda não exista (fallback de segurança)
             const newProfile = await prisma.profile.create({
                 data: {
                     userId: (session.user as any).id,
@@ -28,10 +20,8 @@ export default async function handler(req: any, res: any) {
             });
             return res.status(200).json({ ...session.user, ...newProfile });
         }
-
         return res.status(200).json({ ...session.user, ...profile });
     } catch (error) {
-        console.error("Profile Fetch Error:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }

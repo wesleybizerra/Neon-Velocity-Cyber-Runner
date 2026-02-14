@@ -4,32 +4,20 @@ import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-// Use any for req and res to avoid missing type exports from 'next' in this environment
 export default async function handler(req: any, res: any) {
     if (req.method !== 'POST') return res.status(405).end();
-
     const { name, email, password } = req.body;
-
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-        const user = await prisma.user.create({
+        await prisma.user.create({
             data: {
-                name,
-                email,
-                password: hashedPassword,
-                profile: {
-                    create: {
-                        referralCode
-                    }
-                }
+                name, email, password: hashedPassword,
+                profile: { create: { referralCode } }
             }
         });
-
         return res.status(201).json({ message: "User created" });
     } catch (error) {
-        console.error(error);
-        return res.status(400).json({ error: "User already exists or invalid data" });
+        return res.status(400).json({ error: "User already exists" });
     }
 }
