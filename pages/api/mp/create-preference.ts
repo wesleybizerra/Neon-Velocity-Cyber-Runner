@@ -20,16 +20,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       body: {
         items: [
           {
+            // --- A CORREÇÃO ESTÁ AQUI EMBAIXO ---
+            id: 'item-compra-loja', // O Mercado Pago EXIGE um ID, mesmo que genérico
             title: title,
             quantity: 1,
             unit_price: Number(price),
             currency_id: 'BRL',
           },
         ],
-        // Aqui enviamos o ID do usuário para saber quem pagou depois (via Webhook)
+        // Aqui enviamos o ID do usuário para saber quem pagou depois
         external_reference: userId,
         back_urls: {
-          success: 'https://neon-velocity-cyber-runner-production.up.railway.app/', // Mude para seu site
+          success: 'https://neon-velocity-cyber-runner-production.up.railway.app/',
           failure: 'https://neon-velocity-cyber-runner-production.up.railway.app/',
           pending: 'https://neon-velocity-cyber-runner-production.up.railway.app/',
         },
