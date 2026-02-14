@@ -157,7 +157,10 @@ const HomePage: React.FC = () => {
         return (
           <div className="py-10">
             <button onClick={() => setCurrentState(GameState.DASHBOARD)} className="mb-10 ml-10 text-zinc-500 font-orbitron">← VOLTAR</button>
-            <Store onPurchase={handlePurchase} userBalance={{ coins: user?.coins || 0, gems: user?.gems || 0 }} />
+            <Store
+              refreshData={() => window.location.reload()}
+              userBalance={{ coins: user?.coins || 0, gems: user?.gems || 0 }}
+            />
           </div>
         );
       default:
