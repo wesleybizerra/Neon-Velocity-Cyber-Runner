@@ -1,6 +1,5 @@
-
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { MatchResult } from '../types';
+import { MatchResult } from '@/types';
 
 interface GameEngineProps {
   onGameOver: (result: MatchResult) => void;
@@ -9,10 +8,8 @@ interface GameEngineProps {
 
 const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // Fix: Added initial value null to satisfy useRef type definition which expects 1 argument in some TS configurations
   const requestRef = useRef<number | null>(null);
 
-  // Game State Refs (to avoid re-renders during loop)
   const state = useRef({
     player: { y: 200, velocity: 0, width: 40, height: 40, jumpCount: 0 },
     obstacles: [] as any[],
@@ -51,11 +48,9 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
     state.current.distance += state.current.speed / 10;
     state.current.score = Math.floor(state.current.distance + state.current.orbs.length * 10);
 
-    // Physics
-    state.current.player.velocity += 0.6; // Gravity
+    state.current.player.velocity += 0.6;
     state.current.player.y += state.current.player.velocity;
 
-    // Floor collision
     const floorY = canvas.height - state.current.player.height - 20;
     if (state.current.player.y > floorY) {
       state.current.player.y = floorY;
@@ -63,7 +58,6 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
       state.current.player.jumpCount = 0;
     }
 
-    // Spawn Obstacles
     if (state.current.frames % 120 === 0) {
       state.current.obstacles.push({
         x: canvas.width,
@@ -75,7 +69,6 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
       state.current.speed += 0.1;
     }
 
-    // Spawn Orbs
     if (state.current.frames % 45 === 0) {
       state.current.orbs.push({
         x: canvas.width,
@@ -85,11 +78,8 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
       });
     }
 
-    // Movement & Collision
-    state.current.obstacles.forEach((obs, index) => {
+    state.current.obstacles.forEach((obs) => {
       obs.x -= state.current.speed;
-
-      // Collision Player vs Obstacle
       if (
         state.current.player.y + state.current.player.height > obs.y &&
         state.current.player.y < obs.y + obs.height &&
@@ -100,9 +90,8 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
       }
     });
 
-    state.current.orbs.forEach((orb, index) => {
+    state.current.orbs.forEach((orb) => {
       orb.x -= state.current.speed;
-      // Collision Player vs Orb
       const dx = (orb.x) - (40 + state.current.player.width / 2);
       const dy = (orb.y) - (state.current.player.y + state.current.player.height / 2);
       const dist = Math.sqrt(dx * dx + dy * dy);
@@ -112,7 +101,6 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
       }
     });
 
-    // Cleanup offscreen
     state.current.obstacles = state.current.obstacles.filter(o => o.x > -50);
     state.current.orbs = state.current.orbs.filter(o => o.x > -50 && !o.collected);
   };
@@ -125,14 +113,12 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Background Gradient
     const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
     bgGrad.addColorStop(0, '#050515');
     bgGrad.addColorStop(1, '#150525');
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Grid Floor
     ctx.strokeStyle = '#7000ff33';
     ctx.lineWidth = 1;
     for (let i = 0; i < canvas.width; i += 40) {
@@ -142,14 +128,12 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
       ctx.stroke();
     }
 
-    // Player (Cyber Cube)
     ctx.fillStyle = '#00f2ff';
     ctx.shadowBlur = 15;
     ctx.shadowColor = '#00f2ff';
     ctx.fillRect(40, state.current.player.y, state.current.player.width, state.current.player.height);
     ctx.shadowBlur = 0;
 
-    // Obstacles
     ctx.fillStyle = '#ff0055';
     state.current.obstacles.forEach(obs => {
       ctx.shadowBlur = 10;
@@ -158,7 +142,6 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
     });
     ctx.shadowBlur = 0;
 
-    // Orbs
     state.current.orbs.forEach(orb => {
       if (!orb.collected) {
         ctx.beginPath();
@@ -172,19 +155,19 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
     });
     ctx.shadowBlur = 0;
 
-    // UI Overlay Score
     ctx.fillStyle = '#fff';
     ctx.font = '20px Orbitron';
     ctx.fillText(`Score: ${state.current.score}`, 20, 40);
   };
 
   const endGame = () => {
+    if (state.current.isEnded) return;
     state.current.isEnded = true;
     const result: MatchResult = {
       score: state.current.score,
       coinsEarned: Math.floor(state.current.score / 10),
       xpEarned: Math.floor(state.current.score / 5),
-      orbsCollected: Math.floor(state.current.score / 20) // Simple mock
+      orbsCollected: Math.floor(state.current.score / 20)
     };
     onGameOver(result);
   };

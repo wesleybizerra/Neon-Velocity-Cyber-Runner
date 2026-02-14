@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
-import { GameState, UserProfile, MatchResult, StoreItem } from '../types';
-import GameEngine from '../components/GameEngine';
-import Store from '../components/Store';
+import { GameState, UserProfile, MatchResult, StoreItem } from '@/types';
+import GameEngine from '@/components/GameEngine';
+import Store from '@/components/Store';
 
 const HomePage: React.FC = () => {
   const [currentState, setCurrentState] = useState<GameState>(GameState.LANDING);
@@ -69,8 +68,10 @@ const HomePage: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId: item.id, userId: user.id })
       });
-      const { init_point } = await res.json();
-      window.location.href = init_point;
+      const data = await res.json();
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      }
     } catch (e) {
       alert("Erro ao iniciar pagamento.");
     }
@@ -78,12 +79,14 @@ const HomePage: React.FC = () => {
 
   const handleGameOver = async (result: MatchResult) => {
     setLastMatch(result);
-    await fetch('/api/game/end-match', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ score: result.score, coins: result.coinsEarned, xp: result.xpEarned })
-    });
-    fetchProfile();
+    try {
+      await fetch('/api/game/end-match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score: result.score, coins: result.coinsEarned, xp: result.xpEarned })
+      });
+      fetchProfile();
+    } catch (e) { console.error(e); }
     setCurrentState(GameState.DASHBOARD);
   };
 

@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { STORE_ITEMS } from '../constants';
-import { StoreItem } from '../types';
+import { STORE_ITEMS } from '@/constants';
+import { StoreItem } from '@/types';
 
 interface StoreProps {
   onPurchase: (item: StoreItem) => void;
@@ -27,7 +26,7 @@ const Store: React.FC<StoreProps> = ({ onPurchase, userBalance }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {STORE_ITEMS.map((item) => (
-          <div 
+          <div
             key={item.id}
             className="bg-zinc-900/80 border-2 border-zinc-800 hover:border-purple-500 rounded-xl p-6 transition-all duration-300 transform hover:-translate-y-2 group"
           >
@@ -40,7 +39,7 @@ const Store: React.FC<StoreProps> = ({ onPurchase, userBalance }) => {
               <span className="text-2xl font-bold text-green-400">
                 R$ {(item.priceCents / 100).toFixed(2)}
               </span>
-              <button 
+              <button
                 onClick={() => onPurchase(item)}
                 className="neon-btn px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wider"
               >
@@ -49,24 +48,6 @@ const Store: React.FC<StoreProps> = ({ onPurchase, userBalance }) => {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mt-12 p-8 bg-zinc-900/50 border border-zinc-800 rounded-2xl">
-        <h4 className="text-xl font-orbitron mb-4">Por que apoiar Neon Velocity?</h4>
-        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-zinc-400 text-sm">
-          <li className="flex items-center gap-2">
-            <span className="text-purple-500">✔</span> Benefícios permanentes na conta
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="text-purple-500">✔</span> Sem anúncios chatos
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="text-purple-500">✔</span> Acesso antecipado a novos modos
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="text-purple-500">✔</span> Apoie desenvolvedores independentes
-          </li>
-        </ul>
       </div>
     </div>
   );
