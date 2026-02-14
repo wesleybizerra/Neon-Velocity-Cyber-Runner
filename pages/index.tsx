@@ -84,19 +84,40 @@ const HomePage: React.FC = () => {
 
   const handleGameOver = async (result: MatchResult) => {
     setLastMatch(result);
+
+    if (!user) {
+      console.error("Erro: Usuário não identificado ao fim do jogo.");
+      setCurrentState(GameState.DASHBOARD);
+      return;
+    }
+
+    console.log("Enviando dados para o servidor...", result);
+
     try {
-      await fetch('/api/game/end-match', {
+      const response = await fetch('/api/game/end-match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           score: result.score,
-          coins: result.coinsEarned
+          coins: result.coinsEarned,
+          xp: result.xpEarned,
+          userId: user.id, // <--- IMPORTANTE: Enviando o ID para garantir que a API ache o usuário
+          userEmail: user.email
         })
       });
-      await fetchProfile();
+
+      if (response.ok) {
+        console.log("Servidor confirmou salvamento!");
+        // Atualiza o perfil IMEDIATAMENTE após o servidor confirmar
+        await fetchProfile();
+      } else {
+        console.error("Servidor rejeitou os dados.");
+      }
+
     } catch (e) {
-      console.error("Erro ao salvar progresso", e);
+      console.error("Erro de conexão ao salvar:", e);
     }
+
     setCurrentState(GameState.DASHBOARD);
   };
 

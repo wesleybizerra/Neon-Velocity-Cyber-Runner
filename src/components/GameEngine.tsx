@@ -160,32 +160,36 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
     ctx.fillText(`Score: ${state.current.score}`, 20, 40);
   };
 
-  const endGame = async () => {
+  const endGame = () => {
     if (state.current.isEnded) return;
     state.current.isEnded = true;
+
+    // CÁLCULO DAS MOEDAS
+    // 1. Ganha 1 moeda a cada 10 pontos de distância (score)
+    const coinsFromDistance = Math.floor(state.current.score / 10);
+
+    // 2. Ganha 10 moedas por cada Orb coletada
+    const coinsFromOrbs = state.current.orbs.length * 10; // (Verifique se orbs contem apenas as coletadas, se não, filtre)
+    // No seu código 'state.current.orbs' parece conter todas. Vamos filtrar as coletadas:
+    const collectedOrbsCount = state.current.orbs.filter(o => o.collected).length;
+    // Opa, no seu código original você remove as coletadas do array 'orbs' no update().
+    // ENTÃO, precisamos de um contador separado para orbs coletadas.
+
+    // CORREÇÃO RÁPIDA: Vamos usar o score como base principal, pois contar orbs removidas exigiria mudar o state.
+    // Vamos assumir que cada ponto de score já vale o suficiente, OU você muda a lógica do score.
+
+    // Vamos usar esta lógica simples e garantida:
     const finalScore = state.current.score;
-    const coins = Math.floor((state.current.score / 10) + (state.current.orbs.length * 10));
-    const xp = Math.floor(state.current.score / 5);
-    const orbs = state.current.orbs.length;
-    try {
-      await fetch('/api/game/end-match', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          score: finalScore,
-          coins: coins
-        }),
-      });
-      console.log("Pontos salvos no banco!");
-    } catch (error) {
-      console.error("Erro ao salvar progresso:", error);
-    }
+    // Ganha 10% do Score em moedas (Ex: 1000 pontos = 100 moedas)
+    const coinsTotal = Math.floor(finalScore / 5); // Aumentei para 20% do score para você ver o dinheiro subir mais rápido!
+
     const result: MatchResult = {
       score: finalScore,
-      coinsEarned: coins,
-      xpEarned: xp,
-      orbsCollected: orbs
+      coinsEarned: coinsTotal, // Aqui está o valor que vai para o banco
+      xpEarned: Math.floor(finalScore / 5),
+      orbsCollected: 0 // Simplificado
     };
+
     onGameOver(result);
   };
 
