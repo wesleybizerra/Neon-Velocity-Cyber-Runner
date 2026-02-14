@@ -1,5 +1,5 @@
 import React from 'react';
-import { STORE_ITEMS } from '@/src/constants';
+import { STORE_ITEMS } from '../src/constants';
 import { StoreItem } from '@/types';
 
 interface StoreProps {
