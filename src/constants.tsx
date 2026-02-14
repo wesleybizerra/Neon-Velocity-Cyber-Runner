@@ -36,3 +36,76 @@ export const DAILY_MISSIONS = [
   { id: 2, text: 'Sobreviva 120 segundos', reward: 150, goal: 120 },
   { id: 3, text: 'Atinja o Nível 5 hoje', reward: 200, goal: 5 }
 ];
+export const REAL_MONEY_ITEMS = [
+  {
+    id: 'pack_iniciante',
+    name: 'PACK INICIANTE',
+    description: 'O kit básico para começar bem.',
+    price: 5.00, // Reais
+    benefits: {
+      gems: 100,
+      coins: 1000,
+      bonus: 'Sem bônus extra'
+    },
+    icon: '🎒'
+  },
+  {
+    id: 'pack_mediano',
+    name: 'PACK MEDIANO',
+    description: 'Excelente custo benefício para evoluir rápido.',
+    price: 10.00, // Reais
+    benefits: {
+      gems: 200,
+      coins: 2000,
+      bonus: '+10% Ganhos de Moeda (Permanente)'
+    },
+    icon: '🚀'
+  },
+  {
+    id: 'pack_profissional',
+    name: 'PACK PROFISSIONAL',
+    description: 'Excelente custo benefício para evoluir rápido.',
+    price: 15.00, // Reais
+    benefits: {
+      gems: 300,
+      coins: 3000,
+      bonus: '+15% Ganhos de Moeda (Permanente)'
+    },
+    icon: '👟'
+  },
+  {
+    id: 'pack_superior',
+    name: 'PACK SUPERIOR',
+    description: 'Excelente custo benefício para evoluir rápido.',
+    price: 20.00, // Reais
+    benefits: {
+      gems: 400,
+      coins: 4000,
+      bonus: '+20% Ganhos de Moeda (Permanente)'
+    },
+    icon: '🔥'
+  },
+  {
+    id: 'pack_superior',
+    name: 'PACK SUPERIOR',
+    description: 'Excelente custo benefício para evoluir rápido.',
+    price: 25.00, // Reais
+    benefits: {
+      gems: 500,
+      coins: 5000,
+      bonus: '+25% Ganhos de Moeda (Permanente)'
+    },
+    icon: '⏩'
+  },
+  id: 'pack_legend',
+  name: 'PACK LENDA CYBER',
+  description: 'O pacote supremo. Poder total.',
+  price: 30.00, // Reais
+  benefits: {
+    gems: 700,
+    coins: 7000,
+    bonus: 'ACESSO VIP + Dobro de Score (Permanente)'
+  },
+  icon: '👑'
+  }
+];

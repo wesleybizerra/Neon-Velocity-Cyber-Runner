@@ -156,6 +156,7 @@ const HomePage: React.FC = () => {
             <Store
               refreshData={() => window.location.reload()}
               userBalance={{ coins: user?.coins || 0, gems: user?.gems || 0 }}
+              userId={user?.id} // ADICIONE ESTA LINHA IMPORTANTE
             />
           </div>
         );
