@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { GameState, UserProfile, MatchResult, StoreItem } from '@/types';
 import GameEngine from '@/components/GameEngine';
@@ -40,7 +41,7 @@ const HomePage: React.FC = () => {
         alert("Erro ao criar conta.");
       }
     } else {
-      // Mock de login para o ambiente de demonstração
+      // Mock de login
       const mockUser: UserProfile = {
         id: 'usr_real',
         name: formData.name || 'Cyber Runner',
