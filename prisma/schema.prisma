@@ -1,64 +1,123 @@
 generator client {
-provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
+
 datasource db {
-provider = "postgresql"
-url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
+// --- MODELO DO USUÁRIO CORRIGIDO ---
 model User {
-  id              String    @id @default(cuid())
-  name            String?
-  email           String?   @unique
-  image           String?
-  coins           Int       @default(100) // Dinheiro do jogo
-  gems            Int       @default(0)   // Dinheiro pago
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  
+  // Campos de Login (NextAuth)
+  accounts      Account[]
+  sessions      Session[]
+
+  // Campos do Jogo
+  coins           Int       @default(100)
+  gems            Int       @default(0)
   highScore       Int       @default(0)
   matchesPlayed   Int       @default(0)
   
-  // --- NOVOS CAMPOS QUE VOCÊ PEDIU ---
+  // Novos Campos (VIP e Multiplicadores)
   isVip           Boolean   @default(false)
-  scoreMultiplier Float     @default(1.0) // Se for 1.1, ganha 10% a mais
-  coinMultiplier  Float     @default(1.0) // Se for 2.0, ganha o dobro
+  scoreMultiplier Float     @default(1.0)
+  coinMultiplier  Float     @default(1.0)
   
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  // Relações com outras tabelas (Isso corrige o erro do deploy)
+  profile         Profile?
+  purchases       Purchase[]
+  
+  // Se você criar uma tabela Match no futuro, descomente a linha abaixo:
+  // matches       Match[] 
 }
+
+// --- TABELAS NECESSÁRIAS PARA O LOGIN (NEXTAUTH) ---
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --- SEUS MODELOS DO JOGO ---
+
 model Profile {
-id           String   @id @default(cuid())
-userId       String   @unique
-user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-avatar       String?
-coins        Int      @default(0)
-gems         Int      @default(0)
-xp           Int      @default(0)
-level        Int      @default(1)
-streak       Int      @default(1)
-lastLogin    DateTime @default(now())
-referralCode String   @unique
-benefits     Json     @default("[]")
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  avatar       String?
+  coins        Int      @default(0)
+  gems         Int      @default(0)
+  xp           Int      @default(0)
+  level        Int      @default(1)
+  streak       Int      @default(1)
+  lastLogin    DateTime @default(now())
+  referralCode String   @unique @default(cuid()) // Adicionei default para evitar erro na criação
+  benefits     Json     @default("[]")
 }
+
 model StoreItem {
-id           String     @id
-name         String
-priceCents   Int
-benefits     Json
-active       Boolean    @default(true)
-purchases    Purchase[]
+  id           String     @id
+  name         String
+  priceCents   Int
+  benefits     Json
+  active       Boolean    @default(true)
+  purchases    Purchase[]
 }
+
 model Purchase {
-id          String    @id @default(cuid())
-userId      String
-user        User      @relation(fields: [userId], references: [id])
-itemId      String
-storeItem   StoreItem @relation(fields: [itemId], references: [id])
-mpPaymentId String    @unique
-status      String
-amount      Float
-createdAt   DateTime  @default(now())
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  itemId      String
+  storeItem   StoreItem @relation(fields: [itemId], references: [id])
+  mpPaymentId String    @unique
+  status      String
+  amount      Float
+  createdAt   DateTime  @default(now())
 }
+
 model Referral {
-id             String   @id @default(cuid())
-referrerId     String
-referredUserId String   @unique
-createdAt      DateTime @default(now())
-}
+  id             String   @id @default(cuid())
+  referrerId     String
+  referredUserId String   @unique
+  createdAt      DateTime @default(now())
+  }
