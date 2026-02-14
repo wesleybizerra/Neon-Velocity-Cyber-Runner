@@ -2,50 +2,67 @@ import React from 'react';
 import { STORE_ITEMS } from '../constants';
 import { StoreItem } from '../types';
 
+interface StoreItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  effect: any;
+  icon: string;
+}
 interface StoreProps {
-  onPurchase: (item: StoreItem) => void;
   userBalance: { coins: number; gems: number };
+  refreshData: () => void;
 }
 
-const Store: React.FC<StoreProps> = ({ onPurchase, userBalance }) => {
-  return (
-    <div className="max-w-6xl mx-auto p-6 animate-fadeIn">
-      <div className="flex justify-between items-center mb-8 border-b border-purple-500/30 pb-4">
-        <h2 className="text-3xl font-orbitron text-purple-400 neon-text">LOJA CYBERPUNK</h2>
-        <div className="flex gap-4">
-          <div className="bg-black/50 border border-yellow-500/50 px-4 py-2 rounded-lg flex items-center gap-2">
-            <span className="text-yellow-400">💰</span>
-            <span className="font-bold">{userBalance.coins}</span>
-          </div>
-          <div className="bg-black/50 border border-cyan-500/50 px-4 py-2 rounded-lg flex items-center gap-2">
-            <span className="text-cyan-400">💎</span>
-            <span className="font-bold">{userBalance.gems}</span>
-          </div>
-        </div>
-      </div>
+const Store: React.FC<StoreProps> = ({ userBalance, refreshData }) => {
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  const handlePurchase = async (item: StoreItem) => {
+    // 1. Verifica saldo
+    if (item.currency === 'coins' && userBalance.coins < item.price) {
+      alert("Moedas insuficientes! Jogue mais.");
+      return;
+    }
+    if (item.currency === 'gems' && userBalance.gems < item.price) {
+      alert("Gemas insuficientes! Adquira na loja.");
+      return;
+    }
+
+    // 2. Chama API de Compra (Você precisará criar essa rota api/store/buy)
+    try {
+      const res = await fetch('/api/store/buy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId: item.id }),
+      });
+
+      if (res.ok) {
+        alert(`Você comprou: ${item.name}!`);
+        refreshData(); // Atualiza o saldo na tela
+      } else {
+        alert("Erro na compra.");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div className="p-6 bg-black text-white">
+      <h2 className="text-3xl text-purple-400 font-bold mb-6">MERCADO NEGRO CYBERPUNK</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {STORE_ITEMS.map((item) => (
-          <div
-            key={item.id}
-            className="bg-zinc-900/80 border-2 border-zinc-800 hover:border-purple-500 rounded-xl p-6 transition-all duration-300 transform hover:-translate-y-2 group"
-          >
-            <div className="text-4xl mb-4 group-hover:scale-125 transition-transform">{item.icon}</div>
-            <h3 className="text-xl font-orbitron text-white mb-2">{item.name}</h3>
-            <p className="text-zinc-400 text-sm mb-6 h-12 leading-relaxed">
-              {item.description}
-            </p>
-            <div className="flex items-center justify-between mt-auto">
-              <span className="text-2xl font-bold text-green-400">
-                R$ {(item.priceCents / 100).toFixed(2)}
-              </span>
-              <button
-                onClick={() => onPurchase(item)}
-                className="neon-btn px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wider"
-              >
-                Comprar
-              </button>
-            </div>
+          <div key={item.id} className="border border-green-500 p-4 rounded-xl hover:bg-green-900/20 transition">
+            <div className="text-4xl mb-2">{item.icon}</div>
+            <h3 className="text-xl font-bold">{item.name}</h3>
+            <p className="text-gray-400 text-sm h-12">{item.description}</p>
+            <button
+              onClick={() => handlePurchase(item)}
+              className="mt-4 w-full bg-purple-600 py-2 rounded font-bold hover:bg-purple-500"
+            >
+              Comprar ({item.price} {item.currency === 'coins' ? 'Moedas' : 'Gemas'})
+            </button>
           </div>
         ))}
       </div>

@@ -160,14 +160,31 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
     ctx.fillText(`Score: ${state.current.score}`, 20, 40);
   };
 
-  const endGame = () => {
+  const endGame = async () => {
     if (state.current.isEnded) return;
     state.current.isEnded = true;
+    const finalScore = state.current.score;
+    const coins = Math.floor(state.current.score / 10);
+    const xp = Math.floor(state.current.score / 5);
+    const orbs = state.current.orbs.length;
+    try {
+      await fetch('/api/game/end-match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          score: finalScore,
+          coins: coins
+        }),
+      });
+      console.log("Pontos salvos no banco!");
+    } catch (error) {
+      console.error("Erro ao salvar progresso:", error);
+    }
     const result: MatchResult = {
-      score: state.current.score,
-      coinsEarned: Math.floor(state.current.score / 10),
-      xpEarned: Math.floor(state.current.score / 5),
-      orbsCollected: Math.floor(state.current.score / 20)
+      score: finalScore,
+      coinsEarned: coins,
+      xpEarned: xp,
+      orbsCollected: orbs
     };
     onGameOver(result);
   };

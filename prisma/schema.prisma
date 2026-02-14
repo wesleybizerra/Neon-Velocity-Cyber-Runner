@@ -6,14 +6,22 @@ provider = "postgresql"
 url      = env("DATABASE_URL")
 }
 model User {
-id            String    @id @default(cuid())
-name          String?
-email         String    @unique
-password      String?
-profile       Profile?
-purchases     Purchase[]
-createdAt     DateTime  @default(now())
-updatedAt     DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  name            String?
+  email           String?   @unique
+  image           String?
+  coins           Int       @default(100) // Dinheiro do jogo
+  gems            Int       @default(0)   // Dinheiro pago
+  highScore       Int       @default(0)
+  matchesPlayed   Int       @default(0)
+  
+  // --- NOVOS CAMPOS QUE VOCÊ PEDIU ---
+  isVip           Boolean   @default(false)
+  scoreMultiplier Float     @default(1.0) // Se for 1.1, ganha 10% a mais
+  coinMultiplier  Float     @default(1.0) // Se for 2.0, ganha o dobro
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 model Profile {
 id           String   @id @default(cuid())

@@ -3,49 +3,31 @@ import { StoreItem } from './types';
 
 export const STORE_ITEMS: StoreItem[] = [
   {
-    id: 'pack-starter',
-    name: 'Kit Iniciante',
-    description: '500 Moedas + Boost de XP 1.2x por 7 dias.',
-    priceCents: 500,
-    benefitType: 'coins',
-    benefitValue: 500,
-    icon: '🎁'
+    id: 'cpu_v1',
+    name: 'Neural CPU v1',
+    description: 'Melhora seu processamento: +10% de Score em todas as partidas.',
+    price: 500,
+    currency: 'coins', // Compra com moedas do jogo
+    effect: { type: 'scoreMultiplier', value: 0.1 },
+    icon: '🧠'
   },
   {
-    id: 'pack-speedster',
-    name: 'Combo Velocista',
-    description: '1500 Moedas + Skin Exclusiva Neon-Blue.',
-    priceCents: 1000,
-    benefitType: 'coins',
-    benefitValue: 1500,
-    icon: '⚡'
+    id: 'miner_v1',
+    name: 'Crypto Miner',
+    description: 'Minera enquanto corre: +20% de Moedas ganhas por partida.',
+    price: 15,
+    currency: 'gems', // Compra com dinheiro real (Gemas)
+    effect: { type: 'coinMultiplier', value: 0.2 },
+    icon: '⛏️'
   },
   {
-    id: 'pack-elite',
-    name: 'Passe de Elite',
-    description: '3000 Moedas + 2x XP por 15 dias + Acesso VIP.',
-    priceCents: 1500,
-    benefitType: 'vip',
-    benefitValue: 1,
-    icon: '🏆'
-  },
-  {
-    id: 'pack-vault',
-    name: 'Cofre Mega',
-    description: '6000 Moedas + Efeito de Rastro Ultra Raro.',
-    priceCents: 2000,
-    benefitType: 'coins',
-    benefitValue: 6000,
-    icon: '💰'
-  },
-  {
-    id: 'pack-legend',
-    name: 'Lenda Cyberpunk',
-    description: '15.000 Moedas + Status VIP Vitalício + Multiplicador 1.5x.',
-    priceCents: 3000,
-    benefitType: 'coins',
-    benefitValue: 15000,
-    icon: '🌌'
+    id: 'vip_pass',
+    name: 'ACESSO VIP',
+    description: 'Status Lendário: Dobra TODOS os ganhos e libera área exclusiva.',
+    price: 30,
+    currency: 'gems', // Compra com dinheiro real
+    effect: { type: 'vip', value: true },
+    icon: '👑'
   }
 ];
 
