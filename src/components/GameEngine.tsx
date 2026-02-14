@@ -164,7 +164,7 @@ const GameEngine: React.FC<GameEngineProps> = ({ onGameOver, isPaused }) => {
     if (state.current.isEnded) return;
     state.current.isEnded = true;
     const finalScore = state.current.score;
-    const coins = Math.floor(state.current.score / 10);
+    const coins = Math.floor((state.current.score / 10) + (state.current.orbs.length * 10));
     const xp = Math.floor(state.current.score / 5);
     const orbs = state.current.orbs.length;
     try {
