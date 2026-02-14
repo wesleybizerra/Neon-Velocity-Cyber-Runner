@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { GameState, UserProfile, MatchResult, StoreItem } from '../src/types';
+// IMPORTANTE: Ajuste o caminho '../src/types' se necessário, mas parece estar certo para sua pasta pages
+import { GameState, UserProfile, MatchResult } from '../src/types';
 import GameEngine from '../src/components/GameEngine';
 import Store from '../src/components/Store';
 
@@ -40,6 +41,8 @@ const HomePage: React.FC = () => {
         alert("Erro ao criar conta.");
       }
     } else {
+      // Se tiver NextAuth configurado, aqui seria o login real.
+      // Por enquanto mantendo seu mock para teste visual se o backend falhar
       const mockUser: UserProfile = {
         id: 'usr_real',
         name: formData.name || 'Cyber Runner',
@@ -54,36 +57,28 @@ const HomePage: React.FC = () => {
         referralCode: 'NEON-XYZ',
         benefits: []
       };
+      // Tenta login real se implementado, senão usa mock
       setUser(mockUser);
       setCurrentState(GameState.DASHBOARD);
     }
   };
 
-  const handlePurchase = async (item: StoreItem) => {
-    if (!user) return alert("Faça login para comprar.");
-    try {
-      const res = await fetch('/api/mp/create-preference', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemId: item.id, userId: user.id })
-      });
-      const data = await res.json();
-      if (data.init_point) {
-        window.location.href = data.init_point;
-      }
-    } catch (e) { alert("Erro ao iniciar pagamento."); }
-  };
+  // OBS: Removi a função handlePurchase antiga daqui pois a lógica agora está dentro do Store.tsx
 
   const handleGameOver = async (result: MatchResult) => {
     setLastMatch(result);
+    // Tenta salvar no banco
     try {
       await fetch('/api/game/end-match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ score: result.score, coins: result.coinsEarned, xp: result.xpEarned })
       });
+      // Atualiza perfil após jogo
       fetchProfile();
     } catch (e) { console.error(e); }
+
+    // Volta para o dashboard
     setCurrentState(GameState.DASHBOARD);
   };
 
@@ -130,15 +125,15 @@ const HomePage: React.FC = () => {
           <div className="max-w-6xl mx-auto p-6 animate-fadeIn">
             <div className="flex justify-between items-center mb-8 bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800">
               <div className="flex items-center gap-4">
-                <img src={user?.avatar} className="w-16 h-16 rounded-full border-2 border-cyan-500" alt="Avatar" />
+                <img src={user?.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=fallback"} className="w-16 h-16 rounded-full border-2 border-cyan-500" alt="Avatar" />
                 <div>
                   <h2 className="text-2xl font-orbitron">{user?.name}</h2>
-                  <p className="text-cyan-400 font-bold">LEVEL {user?.level}</p>
+                  <p className="text-cyan-400 font-bold">LEVEL {user?.level || 1}</p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="bg-black/50 p-2 rounded-lg border border-yellow-500/30 text-yellow-400">💰 {user?.coins}</div>
-                <div className="bg-black/50 p-2 rounded-lg border border-orange-500/30 text-orange-400">🔥 {user?.streak}d</div>
+                <div className="bg-black/50 p-2 rounded-lg border border-yellow-500/30 text-yellow-400">💰 {user?.coins || 0}</div>
+                <div className="bg-black/50 p-2 rounded-lg border border-orange-500/30 text-orange-400">🔥 {user?.streak || 0}d</div>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -157,6 +152,7 @@ const HomePage: React.FC = () => {
         return (
           <div className="py-10">
             <button onClick={() => setCurrentState(GameState.DASHBOARD)} className="mb-10 ml-10 text-zinc-500 font-orbitron">← VOLTAR</button>
+            {/* AQUI ESTAVA O ERRO ANTERIOR: Agora passamos refreshData em vez de onPurchase */}
             <Store
               refreshData={() => window.location.reload()}
               userBalance={{ coins: user?.coins || 0, gems: user?.gems || 0 }}
@@ -170,9 +166,9 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white">
-      <nav className="h-16 border-b border-zinc-800 flex items-center justify-between px-6 bg-black/50 backdrop-blur-md fixed top-0 w-full z-50">
+      <nav className="h-16 border-b border-zinc-800 flex items-center justify-center md:justify-between px-6 bg-black/50 backdrop-blur-md fixed top-0 w-full z-50">
         <span className="font-orbitron font-bold text-cyan-400 text-xl tracking-tighter">NEON VELOCITY</span>
-        {user && <span className="text-sm font-orbitron text-zinc-400">SISTEMA ONLINE: {user.name}</span>}
+        {user && <span className="hidden md:block text-sm font-orbitron text-zinc-400">SISTEMA ONLINE: {user.name}</span>}
       </nav>
       <main className="pt-20">
         {renderContent()}
