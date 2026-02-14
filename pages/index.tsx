@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { GameState, UserProfile, MatchResult, StoreItem } from '../types';
-import GameEngine from '../components/GameEngine';
-import Store from '../components/Store';
+import { GameState, UserProfile, MatchResult, StoreItem } from '../src/types';
+import GameEngine from '../src/components/GameEngine';
+import Store from '../src/components/Store';
 
 const HomePage: React.FC = () => {
   const [currentState, setCurrentState] = useState<GameState>(GameState.LANDING);
