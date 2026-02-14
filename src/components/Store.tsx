@@ -1,6 +1,6 @@
 import React from 'react';
-import { STORE_ITEMS } from '../constants';
-import { StoreItem } from '@/types';
+import { STORE_ITEMS } from 'src/constants';
+import { StoreItem } from 'src/types';
 
 interface StoreProps {
   onPurchase: (item: StoreItem) => void;
