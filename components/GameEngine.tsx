@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { MatchResult } from '@/types';
+import { MatchResult } from '../types';
 
 interface GameEngineProps {
   onGameOver: (result: MatchResult) => void;

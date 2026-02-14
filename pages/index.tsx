@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
-import { GameState, UserProfile, MatchResult, StoreItem } from '@/types';
-import GameEngine from '@/components/GameEngine';
-import Store from '@/components/Store';
+import { GameState, UserProfile, MatchResult, StoreItem } from '../types';
+import GameEngine from '../components/GameEngine';
+import Store from '../components/Store';
 
 const HomePage: React.FC = () => {
   const [currentState, setCurrentState] = useState<GameState>(GameState.LANDING);
@@ -41,7 +40,6 @@ const HomePage: React.FC = () => {
         alert("Erro ao criar conta.");
       }
     } else {
-      // Mock de login
       const mockUser: UserProfile = {
         id: 'usr_real',
         name: formData.name || 'Cyber Runner',
@@ -73,9 +71,7 @@ const HomePage: React.FC = () => {
       if (data.init_point) {
         window.location.href = data.init_point;
       }
-    } catch (e) {
-      alert("Erro ao iniciar pagamento.");
-    }
+    } catch (e) { alert("Erro ao iniciar pagamento."); }
   };
 
   const handleGameOver = async (result: MatchResult) => {
